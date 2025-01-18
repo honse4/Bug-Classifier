@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import re
 
 def year(date, is_year_last = True) :
     if is_year_last:
@@ -37,9 +36,3 @@ def label_sev_plot(data, source):
     plt.xlabel("Severity code for each label")
     plt.ylabel("Counts")
     plt.show()
-
-def clean_text(text, lemmatizer, stop_words): 
-    text = re.sub(r'[^\w\s]', '', text) 
-    text = text.lower()
-    text = ' '.join([lemmatizer.lemmatize(word) for word in text.split() if word not in stop_words]) 
-    return text
