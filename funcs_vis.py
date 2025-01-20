@@ -4,16 +4,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def year(date, is_year_last = True) :
-    if is_year_last:
+def year(date) :
+    try:
         date_obj = datetime.strptime(date,'%d-%m-%Y')
-    else:
+    
+    except ValueError:
         date_obj = datetime.strptime(date,'%Y-%m-%d')
         
     return date_obj.year
 
-def year_plot(data, source, is_year_last = True):
-    years = pd.DataFrame([year(date, is_year_last) for date in data['creation_date']], columns=['year'])
+def year_plot(data, source):
+    years = pd.DataFrame([year(date) for date in data['creation_date']], columns=['year'])
     year_plot = years['year'].value_counts().sort_index().plot(kind='bar')
     year_plot.set_ylabel("Frequency")
     year_plot.set_title(f"Bug Reports Count For Each Year - {source}")
