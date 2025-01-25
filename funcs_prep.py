@@ -6,6 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import PCA
 import nltk 
 from nltk.tokenize import word_tokenize, sent_tokenize
+from gensim.models import Word2Vec
 nltk.download('punkt')
 
 def clean_text(text, lemmatizer, stop_words): 
@@ -23,8 +24,7 @@ def prepare_df(data, lemmatizer, stop_words):
     data['description'] = data['short_description']+' '+ data['long_description']
     data['description'] = data['description'].apply(lambda x: clean_text(x, lemmatizer, stop_words))
     data['word_count_desc'] = data['description'].apply(lambda row: len(word_tokenize(row)))
-    data['sent_count_desc'] = data['description'].apply(lambda row: len(sent_tokenize(row)))
-    
+    data = data.drop(columns=['short_description', 'long_description']) 
     return data
 
 def vectorizer(data, column, n_components, features):
@@ -40,5 +40,9 @@ def processed_df(df1, df2):
     df2.reset_index(drop=True, inplace=True) 
 
     df_combined = pd.concat([df1, df2], axis=1)
-    df_combined = df_combined.drop(columns=['bug_id', 'component_name','product_name', 'short_description', 'long_description', 'description'])
     return df_combined
+
+def w2v(data,vector_size=100, window=5, min_count=1, workers=4):
+    sentences = data['description'].apply(lambda x: word_tokenize(x))
+    model = Word2Vec(sentences, vector_size=vector_size, window=window, min_count=min_count, workers=workers)
+    return model
