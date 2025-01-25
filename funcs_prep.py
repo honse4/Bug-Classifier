@@ -24,6 +24,7 @@ def prepare_df(data, lemmatizer, stop_words):
     data['description'] = data['short_description']+' '+ data['long_description']
     data['description'] = data['description'].apply(lambda x: clean_text(x, lemmatizer, stop_words))
     data['word_count_desc'] = data['description'].apply(lambda row: len(word_tokenize(row)))
+    # data['char_count_desc'] = data['description'].apply(lambda row: len(row) )
     data = data.drop(columns=['short_description', 'long_description']) 
     return data
 
@@ -38,11 +39,18 @@ def vectorizer(data, column, n_components, features):
 def processed_df(df1, df2):
     df1.reset_index(drop=True, inplace=True) 
     df2.reset_index(drop=True, inplace=True) 
-
     df_combined = pd.concat([df1, df2], axis=1)
+    df_combined = df_combined.drop(columns=['description'])
     return df_combined
 
 def w2v(data,vector_size=100, window=5, min_count=1, workers=4):
-    sentences = data['description'].apply(lambda x: word_tokenize(x))
+    sentences = data['tokens'].tolist()
     model = Word2Vec(sentences, vector_size=vector_size, window=window, min_count=min_count, workers=workers)
     return model
+
+def embeddings(tokens, model):
+    word_vectors = [model.wv[word] for word in tokens if word in model.wv]
+    if len(word_vectors) > 0:
+        return np.mean(word_vectors, axis=0)
+    else:
+        return np.zeros(model.vector_size)
