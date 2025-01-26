@@ -13,7 +13,7 @@ def clean_text(text, lemmatizer, stop_words):
     text = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', '', text)
     text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
     text = '\n'.join([line for line in text.split('\n') if 'org.eclipse' not in line]) 
-    text = re.sub(r'(\bat\b\s+\S+\.\S+\(.*?\))|(\bException\b.*?\n\s*at\s+.*?\(.*?\))|(\bError\b.*?\n\s*at\s+.*?\(.*?\))', '', text, flags=re.DOTALL) 
+    # text = re.sub(r'(\bat\b\s+\S+\.\S+\(.*?\))|(\bException\b.*?\n\s*at\s+.*?\(.*?\))|(\bError\b.*?\n\s*at\s+.*?\(.*?\))', '', text, flags=re.DOTALL) 
     text = re.sub(r'[^\w\s]', '', text) 
     text = text.lower()
     tokens = word_tokenize(text) 
